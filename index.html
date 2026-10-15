@@ -193,6 +193,9 @@ details .fig-wrap{margin-top:8px}
 .fc-foot{margin:6px 0 0;font-weight:700}
 .zoom{position:fixed;inset:0;z-index:50;background:rgba(10,14,22,.94);overflow:auto;-webkit-overflow-scrolling:touch;padding:60px 10px 28px;box-sizing:border-box;text-align:center}
 .zoom img{display:inline-block;max-width:none;height:auto;background:#fff;border-radius:6px}
+.kakao{display:flex;flex-direction:column;gap:6px;background:var(--hint-wash);border:1px solid var(--hint);border-radius:var(--r);padding:12px 14px;font-size:.92rem;margin-bottom:14px}
+.kakao b{color:var(--hint)}
+.kakao .btn{align-self:flex-start;text-decoration:none}
 .zoom-close{position:fixed;top:max(12px,env(safe-area-inset-top,0px));right:12px;background:#fff;color:#111;border:0;border-radius:999px;padding:8px 16px;font-weight:700;z-index:51}
 </style>
 </head>
@@ -202,8 +205,8 @@ details .fig-wrap{margin-top:8px}
     <h1>2학기 중간고사 문제집</h1>
     <div class="dday" id="dday"></div>
   </header>
-  <div id="view"></div>
-  <p class="foot" id="foot">기록을 불러오는 중이에요.</p>
+  <div id="view"><div class="empty"><strong>문제집을 여는 중이에요</strong>이 글만 계속 보이면 카카오톡 미리보기처럼 프로그램이 실행되지 않는 화면이에요. Safari나 크롬에서 열어 주세요.</div></div>
+  <p class="foot" id="foot"></p>
 </div>
 
 <div id="zoom" class="zoom" hidden role="dialog" aria-modal="true" aria-label="그림 크게 보기"><button class="zoom-close" type="button">닫기 ✕</button><img id="zoomImg" alt=""></div>
@@ -1552,14 +1555,20 @@ function renderDday(){
   const groups = [{label:'수학·국어', date:'2026-10-19', when:'10/19 월'}, {label:'영어·과학', date:'2026-10-20', when:'10/20 화'}];
   document.getElementById('dday').innerHTML = groups.map(g=>`<span>${g.label} · ${g.when} <b>${dday(g.date)}</b></span>`).join('');
 }
+const IN_KAKAO = /KAKAOTALK/i.test((navigator && navigator.userAgent) || '');
+function kakaoBanner(){
+  if (!IN_KAKAO) return '';
+  const ext = /^https?:/.test(location.href) ? `<a class="btn pen" href="kakaotalk://web/openExternal?url=${encodeURIComponent(location.href)}">Safari로 열기</a>` : '';
+  return `<div class="kakao"><b>카카오톡 안에서 열었어요</b><span>여기서 푼 기록은 홈 화면 아이콘과 따로 저장돼서 나중에 안 보일 수 있어요. 카카오톡 메뉴(⋯)에서 Safari로 열어서 써 줘.</span>${ext}</div>`;
+}
 function render(){
   renderDday();
   const v = document.getElementById('view');
-  if (S.screen==='flow'){ v.innerHTML = flowView(); return; }
+  if (S.screen==='flow'){ v.innerHTML = kakaoBanner() + flowView(); return; }
   const nW = openWrongs().length, nM = Object.keys(S.memo).filter(id=>MEMO[id]).length;
   const tab = (key, text, badge) => `<button class="tab" role="tab" aria-selected="${S.tab===key}" data-act="tab" data-v="${key}">${text}${badge?` <span class="badge">${badge}</span>`:''}</button>`;
   const body = S.tab==='home' ? homeView() : S.tab==='figs' ? figsTabView() : S.tab==='note' ? noteView() : memoView();
-  v.innerHTML = `<div class="stack"><nav class="tabs" role="tablist">${tab('home','문제 풀기')}${tab('figs','개념 그림')}${tab('note','오답노트',nW)}${tab('memo','암기장',nM)}</nav>${body}</div>`;
+  v.innerHTML = kakaoBanner() + `<div class="stack"><nav class="tabs" role="tablist">${tab('home','문제 풀기')}${tab('figs','개념 그림')}${tab('note','오답노트',nW)}${tab('memo','암기장',nM)}</nav>${body}</div>`;
 }
 
 function figsTabView(){
@@ -1873,7 +1882,7 @@ document.getElementById('zoom').addEventListener('click', closeZoom);
 document.addEventListener('keydown', e=>{ if (e.key==='Escape') closeZoom(); });
 
 loadLocal(); render();
-setFoot(storageOK ? '기록은 이 아이패드에 저장돼요. 홈 화면에 추가한 아이콘으로만 열어 주세요.' : '이 브라우저에서는 기록을 저장할 수 없어요. 개인정보 보호 브라우징을 끄고 열어 주세요.');
+setFoot(IN_KAKAO ? '카카오톡 안에서는 기록이 따로 저장돼요. Safari로 열어 홈 화면에 추가한 아이콘으로 써 주세요.' : storageOK ?'기록은 이 아이패드에 저장돼요. 홈 화면에 추가한 아이콘으로만 열어 주세요.' : '이 브라우저에서는 기록을 저장할 수 없어요. 개인정보 보호 브라우징을 끄고 열어 주세요.');
 </script>
 </body>
 </html>
