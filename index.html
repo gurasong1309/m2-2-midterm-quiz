@@ -1,0 +1,945 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="중간고사 문제집">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>2학기 중간고사 문제집</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=Nanum+Pen+Script&display=swap">
+<style>
+:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);-webkit-text-size-adjust:100%}
+body{margin:0}
+[hidden]{display:none!important}
+/* Layout: one narrow study column, OMR answer-sheet bubbles for choices, red-pen marks for grading */
+:root{
+  --paper:#F2F4F8; --sheet:#FFFFFF; --ink:#1B2333; --ink-soft:#5A6478; --line:#DDE2EB;
+  --pen:#D1334F; --pen-wash:#FBE8EC; --good:#1E7F55; --good-wash:#E3F3EA; --hint:#7A5A12; --hint-wash:#FBF2DC;
+  --f-display:"Do Hyeon","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --f-body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  --f-pen:"Nanum Pen Script","Apple SD Gothic Neo",cursive;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#0F131B; --sheet:#171D28; --ink:#E3E7EF; --ink-soft:#98A2B5; --line:#2A3242;
+  --pen:#FF6E87; --pen-wash:#3A1A24; --good:#52C98F; --good-wash:#14301F; --hint:#E8C46A; --hint-wash:#33290F; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#0F131B; --sheet:#171D28; --ink:#E3E7EF; --ink-soft:#98A2B5; --line:#2A3242;
+  --pen:#FF6E87; --pen-wash:#3A1A24; --good:#52C98F; --good-wash:#14301F; --hint:#E8C46A; --hint-wash:#33290F; color-scheme:dark}
+
+html,body{background:var(--paper)}
+body{color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:680px;margin:0 auto;padding-block:20px 48px;display:flex;flex-direction:column;gap:18px}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,summary:focus-visible{outline:2px solid var(--pen);outline-offset:2px}
+
+/* header */
+.top{display:flex;flex-direction:column;gap:10px}
+.top h1{font-family:var(--f-display);font-weight:400;font-size:1.9rem;line-height:1.15;margin:0;letter-spacing:-.01em;text-wrap:balance}
+.dday{display:flex;flex-wrap:wrap;gap:8px}
+.dday span{font-size:.82rem;border:1px solid var(--line);background:var(--sheet);border-radius:999px;padding:3px 10px;color:var(--ink-soft)}
+.dday b{color:var(--pen);font-weight:600;font-variant-numeric:tabular-nums}
+
+/* tabs */
+.tabs{display:flex;gap:6px;border-bottom:1px solid var(--line)}
+.tab{background:none;border:0;border-bottom:3px solid transparent;padding:8px 6px 9px;margin-bottom:-1px;font-weight:600;color:var(--ink-soft);display:flex;align-items:center;gap:6px}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--pen)}
+.badge{font-size:.72rem;background:var(--pen);color:var(--sheet);border-radius:999px;padding:0 7px;line-height:1.5;font-variant-numeric:tabular-nums}
+
+/* subject card */
+.subj{background:var(--sheet);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:12px}
+.subj-head{display:flex;gap:12px;align-items:flex-start}
+.bubble-letter{flex:none;width:40px;height:40px;border-radius:50%;border:2px solid var(--pen);color:var(--pen);display:grid;place-items:center;font-family:var(--f-display);font-size:1.3rem}
+.subj-title{flex:1;min-width:0}
+.subj-title h2{font-family:var(--f-display);font-weight:400;font-size:1.35rem;margin:0;line-height:1.3}
+.meta{font-size:.84rem;color:var(--ink-soft);margin:2px 0 0}
+.meta b{color:var(--pen);font-weight:600}
+.rounds{display:flex;flex-direction:column;border-top:1px dashed var(--line)}
+.round{display:grid;grid-template-columns:auto 1fr auto;gap:4px 12px;align-items:center;padding:10px 0;border-bottom:1px dashed var(--line)}
+.round:last-child{border-bottom:0}
+.rnum{font-family:var(--f-display);font-size:1.05rem;white-space:nowrap}
+.rtitle{min-width:0;font-size:.92rem}
+.rstat{font-size:.78rem;color:var(--ink-soft)}
+.score-pen{font-family:var(--f-pen);color:var(--pen);font-size:1.35rem;line-height:1}
+.btn{border:1px solid var(--ink);background:var(--ink);color:var(--sheet);border-radius:8px;padding:7px 14px;font-weight:600;font-size:.9rem;white-space:nowrap}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+.btn.pen{background:var(--pen);border-color:var(--pen);color:var(--sheet)}
+.btn:disabled{opacity:.45;cursor:default}
+.review-link{align-self:flex-start;background:var(--pen-wash);color:var(--pen);border:0;border-radius:8px;padding:7px 12px;font-weight:600;font-size:.88rem}
+
+/* quiz */
+.qbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.qbar .where{font-size:.88rem;color:var(--ink-soft);min-width:0}
+.dots{display:flex;gap:8px}
+.dot{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--line);display:grid;place-items:center;font-size:.78rem;color:var(--ink-soft);font-variant-numeric:tabular-nums;position:relative}
+.dot.now{border-color:var(--pen);color:var(--pen);font-weight:700}
+.dot.ok{border:2.5px solid var(--pen);color:var(--pen)}
+.dot.no{color:var(--ink-soft)}
+.dot.no::after{content:"";position:absolute;width:30px;height:2.5px;background:var(--pen);transform:rotate(-55deg);border-radius:2px}
+.card{background:var(--sheet);border:1px solid var(--line);border-radius:var(--r);padding:18px;display:flex;flex-direction:column;gap:14px}
+.qlabel{font-family:var(--f-display);font-size:1.15rem;color:var(--pen);margin:0}
+.prompt{white-space:pre-line;font-size:1.02rem;margin:0}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{display:flex;gap:12px;align-items:flex-start;text-align:left;background:var(--sheet);border:1px solid var(--line);border-radius:8px;padding:11px 12px;width:100%}
+.opt:hover:not(:disabled){border-color:var(--ink-soft)}
+.opt:disabled{cursor:default}
+.omr{flex:none;width:26px;height:26px;border-radius:50%;border:1.5px solid var(--pen);color:var(--pen);display:grid;place-items:center;font-size:.8rem;font-weight:600;margin-top:1px}
+.opt-text{min-width:0}
+.opt.picked .omr{background:var(--ink);border-color:var(--ink);color:var(--sheet)}
+.opt.right{border-color:var(--good);background:var(--good-wash)}
+.opt.right .omr{border-color:var(--good);color:var(--good)}
+.opt.wrong{border-color:var(--pen);background:var(--pen-wash)}
+.opt.right.picked .omr{background:var(--good);border-color:var(--good);color:var(--sheet)}
+.opt.wrong.picked .omr{background:var(--pen);border-color:var(--pen);color:var(--sheet)}
+.hint-btn{align-self:flex-start;background:var(--hint-wash);color:var(--hint);border:0;border-radius:8px;padding:6px 12px;font-size:.88rem;font-weight:600}
+.hint{background:var(--hint-wash);color:var(--ink);border-radius:8px;padding:10px 12px;font-size:.92rem;margin:0}
+.feedback{border-top:1px dashed var(--line);padding-top:14px;display:flex;flex-direction:column;gap:10px}
+.verdict{font-family:var(--f-pen);font-size:2rem;line-height:1;color:var(--pen);margin:0}
+.answer-line{font-size:.92rem;margin:0}
+.answer-line b{color:var(--good)}
+.explain{white-space:pre-line;font-size:.95rem;background:var(--paper);border-radius:8px;padding:12px;margin:0}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+
+/* result */
+.result-score{font-family:var(--f-pen);color:var(--pen);font-size:4rem;line-height:1;margin:0;font-variant-numeric:tabular-nums}
+.result-list{display:flex;flex-direction:column;gap:6px;margin:0;padding:0;list-style:none}
+.result-list li{display:flex;gap:10px;align-items:baseline;font-size:.92rem}
+.mark{font-family:var(--f-pen);color:var(--pen);font-size:1.4rem;width:22px;flex:none;text-align:center}
+
+/* wrong note */
+.note-head{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.chip{border:1px solid var(--line);background:var(--sheet);border-radius:999px;padding:4px 12px;font-size:.86rem}
+.chip[aria-pressed="true"]{border-color:var(--ink);background:var(--ink);color:var(--sheet)}
+.toggle{display:flex;align-items:center;gap:6px;font-size:.86rem;color:var(--ink-soft);margin-left:auto}
+.group{display:flex;flex-direction:column;gap:10px}
+.group-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.group-head h3{font-family:var(--f-display);font-weight:400;font-size:1.25rem;margin:0}
+.wcard{background:var(--sheet);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.wcard.done{opacity:.7}
+.wmeta{display:flex;flex-wrap:wrap;gap:6px 10px;font-size:.8rem;color:var(--ink-soft);align-items:center}
+.state{border-radius:999px;padding:0 8px;font-weight:600}
+.state.open{background:var(--pen-wash);color:var(--pen)}
+.state.closed{background:var(--good-wash);color:var(--good)}
+.mine{font-size:.9rem;margin:0}
+.mine s{text-decoration-color:var(--pen);text-decoration-thickness:2px}
+details summary{cursor:pointer;font-size:.88rem;color:var(--ink-soft);font-weight:600}
+details .explain{margin-top:8px}
+.empty{background:var(--sheet);border:1px dashed var(--line);border-radius:var(--r);padding:22px;text-align:center;color:var(--ink-soft)}
+.empty strong{display:block;font-family:var(--f-display);font-weight:400;font-size:1.2rem;color:var(--ink);margin-bottom:4px}
+.export{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.export-box{width:100%;box-sizing:border-box;min-height:180px;font:inherit;font-size:.82rem;line-height:1.5;border:1px solid var(--line);border-radius:8px;background:var(--sheet);color:var(--ink);padding:10px}
+.foot{font-size:.8rem;color:var(--ink-soft);text-align:center}
+@media (prefers-reduced-motion: no-preference){.card,.subj,.wcard{animation:rise .18s ease-out}}
+@keyframes rise{from{transform:translateY(4px)}to{transform:none}}
+</style>
+</head>
+<body>
+<div class="wrap" id="app">
+  <header class="top">
+    <h1>2학기 중간고사 문제집</h1>
+    <div class="dday" id="dday"></div>
+  </header>
+  <div id="view"></div>
+  <p class="foot" id="foot">기록을 불러오는 중이에요.</p>
+</div>
+
+<script>
+const SUBJECTS = [
+  {key:'math', name:'수학', short:'수', date:'2026-10-19', when:'10/19(월) 2교시', info:'25문항 · 서술형 4 · 단답형 2', range:'6. 삼각형을 새롭게 보자 · 7. 사각형을 새롭게 보자 · 학습지'},
+  {key:'kor',  name:'국어', short:'국', date:'2026-10-19', when:'10/19(월) 3교시', info:'26문항 · 논술형 4', range:'1단원 · 2단원'},
+  {key:'eng',  name:'영어', short:'영', date:'2026-10-20', when:'10/20(화) 2교시', info:'25문항', range:'교과서 82~105쪽 · 학습 프린트'},
+  {key:'sci',  name:'과학', short:'과', date:'2026-10-20', when:'10/20(화) 3교시', info:'25문항', range:'교과서 164~225쪽(5·6단원) · 학습지'}
+];
+const NUM = ['①','②','③','④','⑤'];
+
+const BANK = {
+math:[
+{round:1,title:'이등변삼각형 · 외심 · 내심 기초',qs:[
+{p:`폭이 일정한 직사각형 모양의 종이테이프를 비스듬히 한 번 접었다.
+
+이때 겹쳐진 부분에 생기는 삼각형은 어떤 삼각형일까?`,
+o:['정삼각형','이등변삼각형','직각삼각형','직각이등변삼각형','접을 때마다 달라서 알 수 없다'],a:1,
+h:`테이프 위아래 변은 평행해. '엇각'과 '접은 각'을 떠올려 봐.`,
+e:`① 테이프의 위아래 변이 평행 → 엇각의 크기가 같다.
+② 접은 각은 접기 전 각과 크기가 같다.
+→ 겹친 삼각형의 두 각이 같아지므로 이등변삼각형.
+
+기억법: '엇각 + 접은각 = 같은 두 각 → 이등변'`},
+{p:`△ABC에서 AB = AC, ∠A = 36°이다.
+
+변 AC 위에 점 D를 BD = BC가 되도록 잡았다.
+
+∠ABD의 크기는?`,
+o:['24°','30°','36°','42°','72°'],a:2,
+h:`먼저 ∠ABC를 구하고, △BCD도 이등변삼각형이라는 걸 써 봐.`,
+e:`① AB = AC → ∠ABC = ∠C = (180° − 36°) ÷ 2 = 72°
+② BD = BC → △BCD에서 ∠BDC = ∠C = 72°, ∠DBC = 36°
+③ ∠ABD = 72° − 36° = 36°
+
+'이등변삼각형 안에 또 이등변삼각형' 유형은 한 단계씩 각을 적어 나가는 게 요령이야.`},
+{p:`삼각형의 외심과 내심에 대한 설명으로 옳은 것은?`,
+o:['외심은 세 내각의 이등분선의 교점이다.','내심에서 세 꼭짓점까지의 거리는 모두 같다.','직각삼각형의 외심은 빗변의 중점이다.','둔각삼각형의 외심은 삼각형의 내부에 있다.','모든 삼각형에서 외심과 내심은 일치한다.'],a:2,
+h:`외심은 '외접원'의 중심, 내심은 '내접원'의 중심이야.`,
+e:`3·3 리듬으로 외우자.
+외심 = 외·수·꼭 → 수직이등분선의 교점, 꼭짓점까지 거리가 같다.
+내심 = 내·각·변 → 각의 이등분선의 교점, 변까지 거리가 같다.
+
+외심 위치: 예각삼각형은 안, 직각삼각형은 빗변의 중점, 둔각삼각형은 밖.
+외심과 내심이 일치하는 건 정삼각형뿐.`},
+{p:`점 O는 △ABC의 외심이다.
+
+∠OAB = 20°, ∠OBC = 30°일 때,
+
+∠OCA의 크기는?`,
+o:['30°','35°','40°','45°','50°'],a:2,
+h:`OA = OB = OC라서 작은 삼각형 세 개가 모두 이등변삼각형이야.`,
+e:`∠OAB = ∠OBA = 20°, ∠OBC = ∠OCB = 30°, ∠OCA = ∠OAC = x
+2(20° + 30° + x) = 180° → x = 40°
+
+공식 한 줄: 외심 문제는 '세 조각의 합 = 90°'.`},
+{p:`점 I는 △ABC의 내심이다.
+
+∠A = 70°일 때,
+
+∠BIC의 크기는?`,
+o:['110°','115°','125°','135°','140°'],a:2,
+h:`∠IBC + ∠ICB를 먼저 구해 봐.`,
+e:`∠IBC + ∠ICB = ½(180° − 70°) = 55° → ∠BIC = 125°
+
+공식: ∠BIC = 90° + ½∠A
+기억법: '내심은 90 더하기 반, 외심은 두 배' (외심이면 ∠BOC = 2∠A = 140°)`}
+]},
+{round:2,title:'내접원 · 평행사변형 · 여러 사각형',qs:[
+{p:`세 변의 길이가 6cm, 8cm, 10cm인 직각삼각형이 있다.
+
+이 삼각형의 내접원의 반지름의 길이는?`,
+o:['1cm','1.5cm','2cm','2.5cm','5cm'],a:2,
+h:`넓이를 두 가지 방법으로 나타내서 같다고 놓아 봐.`,
+e:`① 넓이 = ½ × 6 × 8 = 24
+② 내심 이용 넓이 = ½ × r × (둘레) = 12r
+→ r = 2cm
+
+함정: 5cm는 외접원의 반지름(빗변의 절반).`},
+{p:`평행사변형 ABCD에서
+
+∠A : ∠B = 3 : 2 일 때,
+
+∠C의 크기는?`,
+o:['72°','90°','108°','120°','144°'],a:2,
+h:`이웃한 두 각의 합, 마주 보는 두 각의 관계를 떠올려 봐.`,
+e:`이웃한 두 각의 합 = 180°, 마주 보는 각은 크기가 같다.
+∠A = 180° × 3/5 = 108° → ∠C = ∠A = 108°
+
+함정: ∠B(72°)를 고르기 쉬워.`},
+{p:`다음 중 □ABCD가 평행사변형이 되는 조건이 아닌 것은?`,
+o:['두 쌍의 대변이 각각 평행하다.','두 쌍의 대각의 크기가 각각 같다.','두 대각선이 서로 다른 것을 이등분한다.','한 쌍의 대변이 평행하고, 그 길이가 같다.','한 쌍의 대변이 평행하고, 다른 한 쌍의 대변의 길이가 같다.'],a:4,
+h:`윗변과 아랫변은 평행하고, 양옆 변 길이가 같은 사다리꼴이 있지 않았나?`,
+e:`⑤는 등변사다리꼴도 만족해서 평행사변형이라고 할 수 없어.
+
+④와 ⑤ 구별이 시험 단골!
+기억법: '한 쌍이 둘 다 해내야 평행사변형'`},
+{p:`평행사변형 ABCD의 두 대각선 AC, BD의 교점을 O라 하자.
+
+다음 중 평행사변형 ABCD가 직사각형이 되는 조건은?`,
+o:['AB = BC','AC ⊥ BD','AC = BD','∠A = ∠C','AO = CO'],a:2,
+h:`①②는 다른 사각형이 되는 조건, ④⑤는 원래 평행사변형이면 성립하는 성질이야.`,
+e:`평행사변형 + (한 각이 90° 또는 대각선 길이가 같다) → 직사각형
+평행사변형 + (이웃한 두 변이 같다 또는 대각선이 수직) → 마름모
+
+기억법: '직같·마수' — 직사각형은 대각선이 같고, 마름모는 대각선이 수직.`},
+{p:`여러 가지 사각형 사이의 관계에 대한 설명으로 옳지 않은 것은?`,
+o:['정사각형은 마름모이다.','직사각형은 평행사변형이다.','마름모는 정사각형이다.','정사각형은 직사각형이다.','마름모는 평행사변형이다.'],a:2,
+h:`마름모는 네 변의 길이가 같아. 네 각도 모두 90°일까?`,
+e:`정사각형 ⊂ 직사각형, 정사각형 ⊂ 마름모, 직사각형·마름모 ⊂ 평행사변형
+
+스토리 기억법: 정사각형은 '직사각형 집안'과 '마름모 집안'의 장점을 둘 다 물려받은 막내. 막내는 형들 이름으로 불릴 수 있지만, 형들은 막내라고 부를 수 없다!`}
+]},
+{round:3,title:'기출 변형 · 이등변 · 합동 · 외심',qs:[
+{p:`∠XAY가 있다.
+
+반직선 AX 위에 점 B, D를, 반직선 AY 위에 점 C, E를 점 A에서 가까운 순서대로 잡았다.
+
+이때 AB = BC = CD = DE이다.
+
+점 D에서 선분 DE와 반직선 DX가 이루는 각이 100°일 때,
+
+∠CBD의 크기는?`,
+o:['40°','45°','50°','55°','60°'],a:2,
+h:`∠A = x로 두고 지그재그로 그려 봐. 각이 x → 2x → 3x → 4x로 커져.`,
+e:`∠A = x라 하면 ∠CBD = 2x, ∠DCE = 3x, D에서의 외각 = 4x
+4x = 100° → x = 25° → ∠CBD = 50°
+
+계단 공식: 지그재그 이등변삼각형은 'x, 2x, 3x, 4x'로 한 칸씩 올라간다!`},
+{p:`AB = AC인 이등변삼각형 ABC가 있다.
+
+꼭짓점 A가 꼭짓점 B에 겹치도록 접었더니 접는 선 DE가 생겼다. (점 D는 AB 위, 점 E는 AC 위)
+
+∠EBC = 24°일 때,
+
+∠A의 크기는?`,
+o:['40°','42°','44°','46°','48°'],a:2,
+h:`접힌 각 ∠DBE는 원래 ∠A와 크기가 같아.`,
+e:`∠A = x → ∠DBE = x, ∠ABC = ∠C = x + 24°
+x + 2(x + 24°) = 180° → x = 44°
+
+접기 문제 공식: '접힌 각 = 원래 각'부터 표시하고 시작!`},
+{p:`∠C = ∠F = 90°인 두 직각삼각형 ABC와 DEF가 있다.
+
+두 삼각형이 합동이라고 할 수 없는 조건은?`,
+o:['AB = DE, ∠A = ∠D','AB = DE, BC = EF','AC = DF, BC = EF','∠A = ∠D, ∠B = ∠E','AC = DF, ∠A = ∠D'],a:3,
+h:`각만 같으면 모양은 같아도 크기가 다를 수 있어.`,
+e:`① RHA ② RHS ③ SAS ⑤ ASA 합동
+④ 각만 같으면 크기가 다를 수 있어 합동 X
+
+기억법: R(직각)·H(빗변)는 기본 세트, A(각) 하나면 RHA, S(변) 하나면 RHS.`},
+{p:`∠BAC = 90°이고 AB = AC인 직각이등변삼각형 ABC가 있다.
+
+꼭짓점 A를 지나는 직선 l을 긋고, 두 점 B, C에서 직선 l에 내린 수선의 발을 각각 D, E라고 하자. (D, A, E가 이 순서로 직선 l 위에 있다.)
+
+BD = 9cm, CE = 4cm일 때,
+
+DE의 길이는?`,
+o:['5cm','9cm','11cm','13cm','15cm'],a:3,
+h:`△ABD와 △CAE가 합동이야. 빗변이 같고, 각 하나가 같아.`,
+e:`∠D = ∠E = 90°, AB = CA, ∠DBA = ∠EAC → RHA 합동
+AD = CE = 4cm, AE = BD = 9cm → DE = 13cm
+
+서술형 단골! '합동인 두 삼각형 + 합동 조건 + 길이' 순서로 쓰기.`},
+{p:`점 O는 △ABC의 외심이다.
+
+∠OAB = 18°, ∠OBC = 40°, OA = 7cm일 때,
+
+∠OCA의 크기와 OC의 길이를 바르게 짝지은 것은?`,
+o:['32°, 7cm','32°, 14cm','40°, 7cm','58°, 7cm','32°, 3.5cm'],a:0,
+h:`외심에서 세 꼭짓점까지의 거리는 모두 같아. 각은 '세 조각 합 = 90°'.`,
+e:`길이: OA = OB = OC → OC = 7cm
+각: 90° − 18° − 40° = 32°
+
+외심 문제는 '길이는 다 같다, 각은 합이 90°' 두 가지만 기억!`}
+]},
+{round:4,title:'기출 변형 · 내심 · 넓이 · 움직이는 점',qs:[
+{p:`점 I는 △ABC의 내심이다.
+
+점 I를 지나고 BC에 평행한 직선이 AB, AC와 만나는 점을 각각 D, E라고 하자.
+
+∠BID + ∠CIE = 62°일 때,
+
+∠A의 크기는?`,
+o:['52°','54°','56°','58°','60°'],a:2,
+h:`D, I, E는 한 직선 위에 있어. 그럼 ∠BIC는?`,
+e:`∠BIC = 180° − 62° = 118°
+118° = 90° + ½∠A → ∠A = 56°
+
+보너스(시험 단골): DB = DI, EI = EC → '△ADE의 둘레 = AB + AC'`},
+{p:`∠C = 90°인 직각삼각형 ABC에서
+
+BC = 12cm, CA = 9cm, AB = 15cm이다.
+
+점 I가 △ABC의 내심일 때,
+
+△IAB의 넓이는?`,
+o:['18cm²','20cm²','22.5cm²','27cm²','30cm²'],a:2,
+h:`먼저 내접원의 반지름 r을 구해. △IAB는 밑변 AB, 높이 r이야.`,
+e:`넓이 54 = ½ × r × 36 → r = 3cm
+△IAB = ½ × 15 × 3 = 22.5cm²
+
+함정: 27cm²는 전체 넓이의 절반.`},
+{p:`평행사변형 ABCD의 내부에 한 점 P를 잡았다.
+
+△PAB = 20cm², △PBC = 18cm², △PCD = 25cm²일 때,
+
+△PDA의 넓이는?`,
+o:['23cm²','25cm²','27cm²','29cm²','43cm²'],a:2,
+h:`마주 보는 두 삼각형끼리 넓이를 더하면 같아져.`,
+e:`△PAB + △PCD = △PBC + △PDA (= 전체의 절반)
+20 + 25 = 18 + △PDA → 27cm²
+
+기억법: '마주 보는 짝끼리 합이 같다'`},
+{p:`AD // BC, AD = 20cm, BC = 30cm인 사다리꼴 ABCD가 있다.
+
+점 P는 꼭짓점 A를 출발해 매초 2cm씩 D를 향해 움직인다.
+
+점 Q는 P가 출발하고 3초 뒤에 꼭짓점 B를 출발해 매초 4cm씩 C를 향해 움직인다.
+
+□AQCP가 평행사변형이 되는 것은 P가 출발한 지 몇 초 후인가?`,
+o:['5초 후','6초 후','7초 후','8초 후','9초 후'],a:2,
+h:`AP와 QC는 이미 평행해. 길이만 같으면 돼.`,
+e:`x초 후: AP = 2x, QC = 30 − 4(x − 3) = 42 − 4x
+2x = 42 − 4x → x = 7 (AP = 14cm, BQ = 16cm로 범위 안)
+
+서술형이면 '한 쌍의 대변이 평행하고 그 길이가 같으므로'를 꼭 쓰기!`},
+{p:`(ㄱ) 사각형과,
+
+(ㄴ) 그 사각형의 각 변의 중점을 차례로 연결하여 만든 사각형을
+
+짝지은 것으로 옳지 않은 것은?`,
+o:['평행사변형 → 평행사변형','직사각형 → 마름모','마름모 → 직사각형','정사각형 → 정사각형','등변사다리꼴 → 직사각형'],a:4,
+h:`원래 사각형의 '대각선'이 같은지, 수직인지 보면 정해져.`,
+e:`대각선 길이가 같다 → 마름모 / 대각선이 수직 → 직사각형
+등변사다리꼴은 대각선 길이가 같으므로 → 마름모
+
+기억법: '같으면 마름모, 수직이면 직사각형' (엇갈려서 바뀐다!)`}
+]}
+],
+kor:[
+{round:1,title:'갈등 조정 · 공감 대화 · 히든 피겨스 · 양반전',qs:[
+{p:`민지와 준호가 주말에 할 일을 정하다 다투었다.
+
+민지는 볼링을, 준호는 영화를 원한다.
+
+갈등을 조정하기 위해 주관적인 해석·평가를 빼고 객관적인 사실로 말한 것은?`,
+o:['"넌 맨날 네가 하고 싶은 것만 고집하잖아."','"볼링은 시끄럽기만 하고 재미없어."','"나는 이번 주말에 볼링을 치고 싶고, 너는 영화를 보고 싶다고 했어."','"네가 내 말을 무시해서 이렇게 된 거야."','"영화 같은 지루한 걸 왜 보자는 거야?"'],a:2,
+h:`'맨날', '지루한', '무시해서'처럼 내 평가가 들어간 말을 빼 봐.`,
+e:`③은 '사실'만 말해서 상대가 반감을 덜 느껴.
+
+갈등 조정 대화 3단계 — '사·감·해'
+① 사실을 객관적으로 ② 내 생각·감정을 솔직하게 ③ 해결 방안을 함께
+
+서술형: '주관적 표현 → 객관적 문장으로 고쳐 쓰기'가 자주 나와.`},
+{p:`친구가 이렇게 말했다.
+
+"수행평가 발표를 완전히 망쳐서 너무 창피해."
+
+공감적 대화 방법(상대의 말을 요약하며 감정을 되짚어 주기)에 가장 알맞은 대답은?`,
+o:['"그런 걸로 뭘 창피해해. 다음에 잘하면 되지."','"발표가 생각대로 안 돼서 많이 창피했구나."','"나도 저번에 더 크게 망쳤어. 내 얘기 들어 볼래?"','"근데 너 오늘 점심 뭐 먹었어?"','"그러니까 연습을 더 했어야지."'],a:1,
+h:`친구의 말을 짧게 정리하고, 감정에 이름을 붙여 주는 대답을 찾아.`,
+e:`②는 말을 요약하고 감정을 되짚어 주는 공감적 대화야.
+
+공감을 방해하는 말: 가볍게 여기기, 내 얘기 늘어놓기, 화제 돌리기, 다그치며 충고하기
+기억법: '공감은 ~구나로 끝난다.'`},
+{p:`「히든 피겨스」처럼 영화 촬영을 위해 쓴 시나리오의 특징으로 옳지 않은 것은?`,
+o:['장면(S#) 단위로 이야기가 전개된다.','해설, 대사, 지시문으로 이루어진다.','지시문에 인물의 행동뿐 아니라 화면 연출에 관한 내용이 들어가기도 한다.','무대 상연을 전제로 하므로 등장인물 수와 장소 이동에 제약이 크다.','연극보다 시간과 공간을 자유롭게 표현할 수 있다.'],a:3,
+h:`무대에서 공연하는 대본은 시나리오일까, 희곡일까?`,
+e:`④는 희곡(연극 대본)의 특징이야. 시나리오는 카메라로 찍어서 장소·시간 이동이 자유로워.
+
+기억법: '희곡은 무대, 시나리오는 카메라'
+희곡 = 막·장 / 시나리오 = S#(씬)`},
+{p:`「히든 피겨스」에서 캐서린은 하루에 40분씩 자리를 비운 진짜 이유를 해리슨에게 털어놓는다.
+
+이 장면을 통해 드러나는 당시의 사회 문제는?`,
+o:['직원들의 지나친 커피 소비','건물마다 화장실 수가 부족한 시설 문제','백인과 유색 인종의 시설을 분리한 인종 차별','우주 개발 경쟁에 따른 지나친 업무량','자전거 사용을 금지한 회사 규칙'],a:2,
+h:`캐서린이 왜 가까운 화장실을 쓰지 못했는지 떠올려 봐.`,
+e:`캐서린의 건물에는 유색 인종이 쓸 화장실이 없어 먼 건물까지 뛰어가야 했어. 커피포트까지 따로 썼지.
+
+해리슨이 표시를 떼고 화장실 푯말을 부수는 행동 = 차별적 관행을 없애는 상징적 행동
+주제: 사람의 능력과 가치는 인종·성별로 차별받아서는 안 된다.`},
+{p:`박지원의 「양반전」에 대한 설명으로 옳지 않은 것은?`,
+o:['조선 후기에 쓰인 한문 소설이다.','양반의 무능과 허례허식, 횡포를 풍자하고 있다.','증서를 두 번 만드는 과정을 통해 양반의 실상을 드러낸다.','부자는 두 번째 증서를 듣고 크게 기뻐하며 양반이 되었다.','돈으로 신분을 사려는 모습에서 신분 질서가 흔들리던 시대상을 엿볼 수 있다.'],a:3,
+h:`이야기의 마지막에 부자가 어떻게 했는지 떠올려 봐.`,
+e:`부자는 둘째 증서를 듣고 '도둑이 되라는 것이냐'며 도망쳤고, 다시는 양반 이야기를 꺼내지 않았어.
+
+스토리로 기억하기
+① 가난한 양반, 환곡 천 섬을 못 갚음 ② 부자가 대신 갚고 양반 신분을 삼
+③ 첫째 증서: 까다로운 규칙뿐 ④ 둘째 증서: 특권과 횡포 → 도망!`}
+]},
+{round:2,title:'양반전 증서 · 속담 · 읽기 · 글쓰기',qs:[
+{p:`「양반전」에는 증서가 두 번 나온다.
+
+첫 번째 증서와 두 번째 증서에 담긴 양반의 모습을 순서대로 바르게 짝지은 것은?`,
+o:['백성을 아끼는 마음 / 학문에 힘쓰는 자세','지켜야 할 까다롭고 형식적인 예법 / 양반이 누리는 특권과 횡포','양반이 누리는 특권과 횡포 / 지켜야 할 까다롭고 형식적인 예법','경제적 성공의 비결 / 과거 시험 준비 방법','농사짓는 방법 / 장사하는 방법'],a:1,
+h:`부자가 첫 증서를 듣고 '이게 다예요?' 하며 고쳐 달라고 한 이유를 생각해 봐.`,
+e:`첫째 증서 = 새벽에 일어나기, 느린 걸음 같은 규칙 → 겉치레(허례허식)
+둘째 증서 = 이웃 소로 내 밭 갈기, 일꾼 빼앗기 → 횡포·수탈
+
+기억법: '첫 증서는 겉멋, 둘째 증서는 갑질'
+서술형 키워드: 허례허식, 경제적 무능력(아내의 비판), 부도덕성·수탈(부자의 비판), 풍자`},
+{p:`「양반전」의 첫 번째 증서에는 실속보다 체면과 형식을 중시하는 양반의 모습이 드러난다.
+
+이와 관련 없는 속담은?`,
+o:['양반은 얼어 죽어도 겻불은 안 쬔다.','양반은 물에 빠져도 개헤엄은 안 친다.','양반은 죽을 먹어도 이를 쑤신다.','낫 놓고 기역 자도 모른다.','양반은 죽어도 문자 쓴다.'],a:3,
+h:`나머지는 모두 '힘들어도 체면은 지킨다'는 뜻이야.`,
+e:`①② 체면 때문에 실속을 버림 / ③⑤ 허세
+④는 무식하다는 뜻이라 체면·형식과 관련이 없어.
+
+기억법: 양반 속담 공통점 = '배보다 배꼽(실속보다 체면)'`},
+{p:`글을 읽기 전에 제목과 사진을 훑어보고 '이 글은 독도가 어떻게 만들어졌는지에 대한 내용이겠구나' 하고 짐작했다.
+
+이런 읽기 방법(예측하며 읽기)에 대한 설명으로 적절하지 않은 것은?`,
+o:['제목, 소제목, 사진 같은 단서를 활용한다.','글의 내용을 짐작하며 읽기의 방향을 정할 수 있다.','배경지식을 떠올려 글을 더 잘 이해하도록 돕는다.','읽는 중에 예측이 맞았는지 확인하며 고쳐 나갈 수 있다.','글을 다 읽은 뒤 글쓴이의 주장을 비판적으로 평가하는 활동이다.'],a:4,
+h:`예측은 언제 하는 활동일까? 읽기 '전'일까, '후'일까?`,
+e:`예측하기는 주로 읽기 전·중 활동이야. ⑤는 비판적 읽기(읽기 후).
+
+독도 형성 4단계 (순서 배열 단골!)
+물속 용암 분출 → 닫힌 분화구 폭발 → 침식으로 두 섬 분리 → 해수면 상승
+기억법: '분·폭·침·상' (화산이 분폭하고 침상에 누웠다)`},
+{p:`지호는 '매일 영어 단어 20개 외우기'를 계획했다.
+
+그런데 사흘째에 하루를 빠뜨리자 '이번 계획은 완전히 망했어. 난 원래 안 돼.' 하며 단어 외우기를 그만두었다.
+
+열등감을 다룬 글의 관점에서 지호에게 해 줄 조언으로 가장 적절한 것은?`,
+o:['"의지가 약하니 목표를 하루 50개로 올려서 스스로를 채찍질해."','"하루 빠진 건 작은 미끄러짐이야. 그동안 외운 단어는 남아 있으니 내일 다시 하면 돼."','"어차피 못 지킬 계획이었으니 아예 세우지 마."','"다른 친구들은 다 하는데 너만 못 하는 건 문제가 있어."','"실패한 원인은 생각하지 말고 그냥 잊어버려."'],a:1,
+h:`작은 실수를 '전부 망했다'로 부풀리는 걸 뭐라고 했더라?`,
+e:`지호는 과대 해석과 지나친 자책을 하고 있어.
+
+열등감 극복 3가지 — '작·과·자'
+① 작은 목표로 성취 경험 쌓기 ② 과대 해석·자책 하지 않기 ③ 자기 자비('괜찮아, 그럴 수도 있지')
+
+⑤가 틀린 이유: 원인을 돌아보는 건 필요해. 문제는 '지나친' 자책.`},
+{p:`글쓰기 과정과 그 단계에서 하는 활동의 짝이 옳지 않은 것은?`,
+o:['계획하기 – 글의 목적, 주제, 예상 독자를 정한다.','내용 생성하기 – 자료를 조사하고 쓸 내용을 떠올린다.','내용 조직하기 – 글의 흐름에 맞게 개요를 작성한다.','표현하기 – 어려운 용어는 쉽게 풀어 쓰고, 자료를 그래프로 바꿔 이해하기 쉽게 한다.','고쳐쓰기 – 처음으로 글의 주제와 예상 독자를 정한다.'],a:4,
+h:`주제와 독자는 글을 쓰기 제일 처음에 정하는 거야.`,
+e:`주제·독자 정하기는 맨 처음 '계획하기' 단계야.
+
+글쓰기 5단계: 계획 → 생성 → 조직 → 표현 → 고쳐쓰기
+기억법: '계·생·조·표·고' → "계란을 생으로 조리하면 표정이 고장난다"
+
+개요의 효과(서술형): 흐름과 순서를 미리 정해 주제에서 벗어나지 않고 짜임새 있는 글을 쓸 수 있다.`}
+]}
+],
+eng:[
+{round:1,title:'The 비교급 · 지각동사 · 가주어 · to부정사',qs:[
+{p:`빈칸에 들어갈 말로 알맞은 것은?
+
+The more you practice, the ______ you will play.`,
+o:['good','well','better','best','more good'],a:2,
+h:`'The 비교급 ~, the 비교급 …' 구문이야. well의 비교급은?`,
+e:`The 비교급 + 주어 + 동사, the 비교급 + 주어 + 동사 = '~할수록 더 …하다'
+play well → better
+
+기억법: 'The ~er, the ~er' — 시소처럼 한쪽이 올라가면 다른 쪽도 올라간다!`},
+{p:`다음 중 어법상 틀린 것은?`,
+o:['The earlier you leave, the sooner you will arrive.','The more books you read, the more you learn.','The more hot it gets, the more water we drink.','The colder it is, the more clothes I wear.','The harder he worked, the more money he saved.'],a:2,
+h:`hot의 비교급은 more hot일까?`,
+e:`hot → hotter (짧은 형용사는 -er). more + 원급은 긴 형용사에만.
+바른 문장: The hotter it gets, the more water we drink.
+
+함정: 'The more high', 'The more hot'처럼 more를 억지로 붙인 보기가 자주 나와!`},
+{p:`다음 중 어법상 틀린 것은?`,
+o:['I saw him cross the street.','We watched the kids playing soccer.','She felt the ground shake.','I heard someone to call my name.','They heard the birds singing in the tree.'],a:3,
+h:`see, watch, hear, feel 뒤 목적어 다음에는 어떤 형태가 올까?`,
+e:`지각동사 + 목적어 + 동사원형 또는 -ing (to부정사 X)
+바른 문장: I heard someone call(calling) my name.
+
+기억법: '지각동사 뒤에 to가 오면 지각이다!'`},
+{p:`다음 문장과 뜻이 같도록 바꿔 쓴 것으로 알맞은 것은?
+
+Being kind to others is important.`,
+o:['It is important being kind to others.','That is important to be kind to others.','It is important to be kind to others.','It is important be kind to others.','To others is important to be kind.'],a:2,
+h:`긴 주어를 뒤로 보내고 앞에 가짜 주어 It을 세워 봐.`,
+e:`가주어 It + is + 형용사 + 진주어(to부정사)
+It은 '그것'이라고 해석하지 않아!
+
+기억법: '긴 주어는 꼬리로, 머리엔 It'`},
+{p:`[ ] 안 to부정사의 쓰임이 <보기>와 같은 것은?
+
+<보기> She went to the store [to buy] some milk.`,
+o:['I need something [to drink].','My dream is [to become] a pilot.','We got up early [to catch] the first bus.','It is fun [to play] soccer with friends.','He wants [to learn] Chinese.'],a:2,
+h:`<보기>의 to buy는 '사기 위해'라는 목적의 뜻이야.`,
+e:`<보기> = 부사적 용법(목적) → ③
+① 형용사적 ② 명사적(보어) ④ 명사적(진주어) ⑤ 명사적(목적어)
+
+확인 꿀팁: 'in order to'로 바꿔도 말이 되면 목적!`}
+]},
+{round:2,title:'each · because of · 대화 · 어휘 · 독해',qs:[
+{p:`(A), (B)에 들어갈 말이 바르게 짝지어진 것은?
+
+(A) Each of the students ( has / have ) a locker.
+
+(B) The game was canceled ( because / because of ) the heavy rain.`,
+o:['has – because','has – because of','have – because','have – because of','have – 둘 다 가능'],a:1,
+h:`each는 '하나하나'라서 단수야. the heavy rain은 문장일까, 명사일까?`,
+e:`(A) Each (of ~) + 단수 동사 → has
+(B) because + 문장 / because of + 명사(구) → because of
+
+기억법: 'because는 문장을, because of는 명사를 데려온다'`},
+{p:`빈칸에 들어갈 말로 알맞지 않은 것은?
+
+A: Wow, this bird feeder looks great! Did you buy it?
+
+B: No, I made it from a plastic bottle.
+
+A: Really? ________________________
+
+B: First, wash the bottle. Then cut a small hole in it.`,
+o:['Can you tell me how to make one?','How can I make one?','What should I do to make one?','Could you let me know how to make one?','What do you think of plastic bottles?'],a:4,
+h:`B가 '먼저 ~하고, 그다음 ~해'라고 대답했어. 무엇을 물어본 걸까?`,
+e:`B의 대답이 만드는 방법이니 빈칸은 방법을 묻는 말. ⑤는 의견 묻기.
+
+방법 묻기: How can I ~? / Can you tell me how to ~? / What should I do to ~?
+대답 신호어: First, Then, Finally / Don't forget to ~`},
+{p:`단어와 영영풀이의 연결이 바르지 않은 것은?`,
+o:['flood – to cover a place with a lot of water','canal – a narrow waterway made for boats','tourist – a person who visits a place for fun','reduce – to use something again','rise – to move upward'],a:3,
+h:`3R(Reduce, Reuse, Recycle)의 뜻을 하나씩 떠올려 봐.`,
+e:`'다시 쓰다'는 reuse. reduce = 줄이다.
+
+3R 구별법: reUSE(use가 들어 있음 → 다시 쓰다), reCYCLE(cycle 돌다 → 재활용), 남은 reduce → 줄이다`},
+{p:`다음 글의 내용과 일치하지 않는 것은?
+
+Hi, I'm Daniel. Last month, our class started "Lights Off Day."
+
+Every Friday, we turn off the lights during lunch and open the curtains.
+
+At first, some students didn't like the idea. But soon, they saw the electricity bill going down.
+
+Our teacher said, "The less energy we use, the cooler the Earth stays."
+
+Now, students in other classes want to join us!`,
+o:["Daniel's class started Lights Off Day last month.",'The students turn off the lights during lunch every Friday.','All the students liked the idea from the beginning.','The electricity bill went down.','Students in other classes want to join.'],a:2,
+h:`'At first, some students didn't like ~' 문장을 다시 봐.`,
+e:`처음에는 일부 학생들이 좋아하지 않았다고 했으니 ③이 틀렸어.
+
+독해 꿀팁: All, only, never, always가 들어간 보기는 본문과 한 번 더 대조!`},
+{p:`다음 문장이 의미하는 바로 가장 알맞은 것은?
+
+Money doesn't grow on trees.`,
+o:['나무를 키우는 데에는 돈이 많이 든다.','돈은 쉽게 얻을 수 없으니 계획적으로 써야 한다.','돈보다 자연환경이 더 소중하다.','열심히 일하지 않아도 돈은 저절로 모인다.','돈은 나무처럼 시간이 지나면 저절로 늘어난다.'],a:1,
+h:`돈이 나무에 열매처럼 열리지 않는다면?`,
+e:`돈은 쉽게 생기지 않는다 → 아껴서 계획적으로 써야 한다.
+관련 표현: spending habit(소비 습관), save(저축하다), spend A on B(B에 A를 쓰다)`}
+]}
+],
+sci:[
+{round:1,title:'광합성 · 호흡 실험',qs:[
+{p:`광합성에 대한 설명으로 옳지 않은 것은?`,
+o:['이산화 탄소와 물을 원료로 한다.','빛에너지를 이용해 포도당과 산소를 만든다.','광합성에 필요한 이산화 탄소는 잎의 기공을 통해 들어온다.','광합성은 식물 세포의 미토콘드리아에서 일어난다.','광합성으로 만들어진 포도당은 곧 녹말로 바뀌어 잎에 잠시 저장된다.'],a:3,
+h:`초록색 알갱이가 빛을 받는 곳이 어디였지?`,
+e:`광합성은 엽록체, 호흡은 미토콘드리아.
+광합성 식: 이산화 탄소 + 물 →(빛, 엽록체)→ 포도당 + 산소
+
+기억법: '광합성은 초록 공장, 호흡은 발전소'`},
+{p:`1% 탄산수소 나트륨 수용액에 시금치 잎 조각을 가라앉힌 뒤 LED 전등을 비추었다.
+
+전등과 비커 사이의 거리를 30cm에서 10cm로 가깝게 했을 때 나타나는 변화로 옳은 것은? (단, 다른 조건은 같다.)`,
+o:['빛의 세기가 약해져 잎 조각이 늦게 떠오른다.','빛의 세기가 강해져 잎 조각이 떠오르는 데 걸리는 시간이 짧아진다.','이산화 탄소가 부족해져 잎 조각이 떠오르지 않는다.','잎 조각에서 이산화 탄소가 발생해 더 빨리 가라앉는다.','거리와 관계없이 떠오르는 시간은 같다.'],a:1,
+h:`전등이 가까우면 빛은 강해져. 잎 조각을 띄우는 기체는?`,
+e:`가까워짐 → 빛↑ → 광합성↑ → 산소 빨리 발생 → 빨리 떠오름
+
+실험 핵심: 탄산수소 나트륨 = 이산화 탄소 공급 / 떠오르는 이유 = 산소 / 빛이 일정 세기 이상이면 광합성량은 더 늘지 않고 일정`},
+{p:`온도가 광합성량에 미치는 영향을 알아보려고 한다.
+
+(가) 이산화 탄소 0.03% / 20℃ / 빛 2000lx
+(나) 이산화 탄소 0.03% / 30℃ / 빛 2000lx
+(다) 이산화 탄소 0.01% / 30℃ / 빛 3000lx
+(라) 이산화 탄소 0.01% / 20℃ / 빛 2000lx
+(마) 이산화 탄소 0.03% / 20℃ / 빛 3000lx
+
+비교해야 할 두 실험으로 옳은 것은?`,
+o:['(가)와 (나)','(가)와 (마)','(나)와 (다)','(다)와 (라)','(라)와 (마)'],a:0,
+h:`알아보려는 것(온도)만 다르고, 나머지는 모두 같아야 해.`,
+e:`변인 통제: 온도만 다르게, 이산화 탄소·빛은 같게 → (가)(나)
+(가)(마)는 빛만 다름 → 빛의 영향을 볼 때 쓰는 쌍
+
+온도 그래프는 산 모양(너무 뜨거우면 급감), 빛·이산화 탄소 그래프는 증가하다 평평`},
+{p:`파란색 BTB 용액에 숨을 불어넣어 노란색으로 만든 뒤 시험관 A~C에 나눠 담았다.
+
+A: 검정말을 넣고 빛을 비춤
+B: 검정말을 넣고 알루미늄 포일로 감싸 빛을 차단함
+C: 검정말 없이 빛을 비춤
+
+몇 시간 뒤의 결과로 옳은 것은?`,
+o:['A, B, C 모두 파란색으로 변한다.','A만 파란색 쪽으로 변한다.','B만 파란색 쪽으로 변한다.','A와 C가 파란색 쪽으로 변한다.','세 시험관 모두 노란색 그대로이다.'],a:1,
+h:`이산화 탄소가 많으면 노란색, 줄면 파란색 쪽이야.`,
+e:`BTB: 산성 노랑 – 중성 초록 – 염기성 파랑
+A: 광합성 > 호흡 → 이산화 탄소 감소 → 파란색 쪽
+B: 호흡만 → 노란색 그대로 / C: 대조군
+
+기억법: '산노·중초·염파'`},
+{p:`식물의 호흡에 대한 설명으로 옳은 것은?`,
+o:['빛이 없는 밤에만 일어난다.','엽록체가 있는 세포에서만 일어난다.','이산화 탄소를 흡수하고 산소를 내보낸다.','살아 있는 모든 세포에서 낮과 밤 구분 없이 일어난다.','빛이 강한 낮에는 호흡량이 광합성량보다 많다.'],a:3,
+h:`사람도 낮이든 밤이든 숨을 쉬잖아.`,
+e:`호흡 = 포도당 + 산소 → 이산화 탄소 + 물 + 에너지 (24시간)
+낮: 광합성 > 호흡 → 산소 방출 / 밤: 호흡만 → 이산화 탄소 방출
+
+기억법: '광합성은 낮에만 출근, 호흡은 24시간 야근까지'`}
+]},
+{round:2,title:'산물 이동 · 소화 · 순환 · 호흡 · 배설',qs:[
+{p:`광합성 산물의 이동과 저장에 대한 설명으로 옳은 것은?`,
+o:['녹말 형태 그대로 물관을 통해 이동한다.','낮에 만들어진 녹말은 주로 밤에 설탕으로 바뀌어 체관을 통해 이동한다.','물에 잘 녹지 않는 형태로 바뀌어 이동한다.','광합성 산물은 모두 잎에만 저장된다.','모든 식물은 광합성 산물을 같은 형태로 저장한다.'],a:1,
+h:`물관은 물, 체관은 양분의 길이야.`,
+e:`포도당 → 녹말(낮, 잎) → 설탕(주로 밤) → 체관으로 이동 → 사용·저장
+저장 형태: 감자(녹말), 포도(포도당), 콩(단백질), 참깨(지방)
+
+기억법: '물관은 물, 체관은 체(몸)에 쓸 양분'`},
+{p:`작은창자 융털의 암죽관으로 흡수되는 영양소끼리 짝지은 것은?`,
+o:['포도당, 아미노산','지방산, 모노글리세리드','무기염류, 수용성 바이타민','포도당, 지방산','아미노산, 무기염류'],a:1,
+h:`물에 녹는 영양소와 기름에 녹는 영양소는 길이 달라.`,
+e:`모세 혈관: 수용성(포도당, 아미노산, 무기염류, 수용성 바이타민)
+암죽관: 지용성(지방산, 모노글리세리드, 지용성 바이타민)
+
+기억법: '물은 모세, 기름은 암죽'
+융털의 장점: 표면적이 넓어져 흡수 효율↑`},
+{p:`혈관에 대한 설명으로 옳지 않은 것은?`,
+o:['동맥은 혈관 벽이 두껍고 탄력이 커서 높은 혈압을 견딘다.','정맥에는 혈액이 거꾸로 흐르는 것을 막는 판막이 있다.','모세 혈관은 벽이 한 겹의 세포로 되어 있어 물질 교환이 일어난다.','정맥은 혈관 벽이 가장 두껍고 혈압이 가장 높다.','혈액은 동맥 → 모세 혈관 → 정맥 순으로 흐른다.'],a:3,
+h:`심장에서 세게 뿜어져 나가는 혈관이 더 튼튼해야 하겠지?`,
+e:`혈압: 동맥 > 모세 혈관 > 정맥
+속도: 동맥 > 정맥 > 모세 혈관 (가장 느려 물질 교환에 유리)
+
+기억법: '동두·정판·모한겹'`},
+{p:`들숨이 일어날 때의 변화로 옳은 것은?`,
+o:['갈비뼈가 내려가고 가로막이 올라간다.','갈비뼈가 올라가고 가로막이 내려간다.','흉강의 부피가 작아진다.','흉강 안의 압력이 높아진다.','공기가 폐에서 몸 밖으로 나간다.'],a:1,
+h:`숨을 크게 들이쉬면 가슴이 어떻게 되는지 직접 해 봐!`,
+e:`들숨: 갈비뼈↑ 가로막↓ → 흉강 부피↑ → 압력↓ → 공기가 폐로
+날숨은 모두 반대. 폐는 근육이 없어 스스로 못 움직여.
+
+기억법: '들숨 = 가슴 펴기: 갈비뼈 업, 가로막 다운'`},
+{p:`건강한 사람의 오줌에 포도당이 거의 없는 이유로 옳은 것은?`,
+o:['포도당은 크기가 커서 사구체에서 보먼주머니로 여과되지 않기 때문이다.','포도당은 여과되지만 세뇨관에서 모세 혈관으로 모두 재흡수되기 때문이다.','포도당은 간에서 모두 요소로 바뀌기 때문이다.','포도당은 폐에서 날숨으로 모두 빠져나가기 때문이다.','포도당은 콩팥에서 분비되어 방광에 저장되기 때문이다.'],a:1,
+h:`단백질과 포도당은 오줌에 없는 이유가 서로 달라.`,
+e:`여과(사구체→보먼주머니): 혈구·단백질은 통과 X, 포도당은 통과
+재흡수(세뇨관→모세 혈관): 포도당·아미노산 100%
+
+스토리: '단백질은 문 앞에서 막히고, 포도당은 들어갔다가 부메랑처럼 돌아온다.'
+배설 흐름: 단·암·간·요·콩·오`}
+]}
+]
+};
+
+/* index every question */
+const Q = {};
+for (const s of SUBJECTS) for (const r of BANK[s.key]) r.qs.forEach((q,i)=>{
+  q.id = `${s.key}-r${r.round}-q${i+1}`; q.subject = s.key; q.round = r.round; q.num = i+1;
+  Q[q.id] = q;
+});
+
+/* ---------- state & storage ---------- */
+const S = { tab:'home', screen:'list', quiz:null, filter:'all', showResolved:false,
+  attempts:[], wrongs:{}, mode:'loading' };
+const LS_KEY = 'midterm-quiz-v1';
+let storageOK = true;
+try { localStorage.setItem('__t','1'); localStorage.removeItem('__t'); } catch(e){ storageOK = false; }
+function loadLocal(){ try{ const d = JSON.parse(localStorage.getItem(LS_KEY)||'null'); if(d){ S.attempts=d.attempts||[]; S.wrongs=d.wrongs||{}; } }catch(e){} }
+function saveLocal(){ try{ localStorage.setItem(LS_KEY, JSON.stringify({attempts:S.attempts, wrongs:S.wrongs})); }catch(e){ setFoot('기록을 저장하지 못했어요. 홈 화면 아이콘으로 열었는지 확인해 주세요.'); } }
+function putWrong(rec){ S.wrongs[rec.qid] = rec; saveLocal(); }
+function addAttempt(att){ S.attempts.push(att); saveLocal(); }
+function setFoot(t){ document.getElementById('foot').textContent = t; }
+
+function fmtTime(iso){ const d = new Date(iso); if (isNaN(d)) return ''; return `${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`; }
+function exportText(){
+  const L = [`[중간고사 문제집 기록] ${fmtTime(new Date().toISOString())} 기준`, '', '■ 푼 회차'];
+  const atts = S.attempts.slice().sort((a,b)=>String(a.at).localeCompare(String(b.at)));
+  if (!atts.length) L.push('- 아직 없음');
+  for (const a of atts){
+    const s = subj(a.subject);
+    const miss = (a.results||[]).filter(r=>!r.correct).map(r=>{ const q=Q[r.qid]; return q ? `${q.round}회차 ${q.num}번` : r.qid; });
+    L.push(`- ${fmtTime(a.at)} ${s?s.name:a.subject} ${a.kind==='review'?'오답 다시 풀기':a.round+'회차'} ${a.score}/${a.total}${miss.length?` (틀림: ${miss.join(', ')})`:''}`);
+  }
+  const ws = Object.values(S.wrongs).filter(w=>Q[w.qid]).sort((a,b)=>(a.resolved-b.resolved)||a.qid.localeCompare(b.qid,undefined,{numeric:true}));
+  const open = ws.filter(w=>!w.resolved).length;
+  L.push('', `■ 오답노트 (못 푼 오답 ${open} · 해결 ${ws.length-open})`);
+  if (!ws.length) L.push('- 아직 없음');
+  for (const w of ws){
+    const q = Q[w.qid], s = subj(w.subject);
+    L.push(`- [${w.resolved?'해결':'미해결'}] ${s.name} ${q.round}회차 ${q.num}번 (${w.qid}) · 틀린 횟수 ${w.wrongCount} · 고른 답 ${NUM[w.lastChosen]||'-'} · 정답 ${NUM[q.a]}`);
+    L.push(`  ${q.p.split('\n').filter(Boolean)[0].slice(0,60)}`);
+  }
+  return L.join('\n');
+}
+
+/* ---------- helpers ---------- */
+const esc = s => String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const subj = k => SUBJECTS.find(s=>s.key===k);
+const roundOf = (k,n) => BANK[k].find(r=>r.round===n);
+function dday(dateStr){
+  const t = new Date(); const today = new Date(t.getFullYear(), t.getMonth(), t.getDate());
+  const [y,m,d] = dateStr.split('-').map(Number); const ex = new Date(y, m-1, d);
+  const n = Math.round((ex - today)/86400000);
+  return n>0 ? `D-${n}` : n===0 ? 'D-DAY' : '시험 끝';
+}
+const openWrongs = k => Object.values(S.wrongs).filter(w=>!w.resolved && (!k || w.subject===k));
+function roundStats(k,n){
+  const list = S.attempts.filter(a=>a.kind==='round' && a.subject===k && a.round===n).sort((a,b)=>String(a.at).localeCompare(String(b.at)));
+  return { count:list.length, last:list[list.length-1] };
+}
+
+/* ---------- render ---------- */
+function renderDday(){
+  const groups = [
+    {label:'수학·국어', date:'2026-10-19', when:'10/19 월'},
+    {label:'영어·과학', date:'2026-10-20', when:'10/20 화'}];
+  document.getElementById('dday').innerHTML = groups.map(g=>`<span>${g.label} · ${g.when} <b>${dday(g.date)}</b></span>`).join('');
+}
+
+function render(){
+  renderDday();
+  const v = document.getElementById('view');
+  if (S.screen==='quiz') { v.innerHTML = quizView(); return; }
+  if (S.screen==='result') { v.innerHTML = resultView(); return; }
+  const n = openWrongs().length;
+  const tabs = `<nav class="tabs" role="tablist">
+    <button class="tab" role="tab" aria-selected="${S.tab==='home'}" data-act="tab" data-v="home">문제 풀기</button>
+    <button class="tab" role="tab" aria-selected="${S.tab==='note'}" data-act="tab" data-v="note">오답노트 ${n?`<span class="badge">${n}</span>`:''}</button>
+  </nav>`;
+  v.innerHTML = `<div style="display:flex;flex-direction:column;gap:16px">${tabs}${S.tab==='home'?homeView():noteView()}</div>`;
+}
+
+function homeView(){
+  return SUBJECTS.map(s=>{
+    const rounds = BANK[s.key].map(r=>{
+      const st = roundStats(s.key, r.round);
+      const stat = st.last ? `<span class="score-pen">${st.last.score}/${st.last.total}</span> <span class="rstat">· ${st.count}번 풂</span>` : `<span class="rstat">아직 안 풂</span>`;
+      return `<div class="round">
+        <span class="rnum">${r.round}회차</span>
+        <span class="rtitle">${esc(r.title)}<br>${stat}</span>
+        <button class="btn${st.last?' ghost':''}" data-act="start" data-s="${s.key}" data-r="${r.round}">${st.last?'다시 풀기':'풀기'}</button>
+      </div>`;
+    }).join('');
+    const w = openWrongs(s.key).length;
+    return `<section class="subj" aria-label="${s.name}">
+      <div class="subj-head">
+        <span class="bubble-letter" aria-hidden="true">${s.short}</span>
+        <div class="subj-title">
+          <h2>${s.name}</h2>
+          <p class="meta">${s.when} · <b>${dday(s.date)}</b> · ${s.info}</p>
+          <p class="meta">범위: ${esc(s.range)}</p>
+        </div>
+      </div>
+      <div class="rounds">${rounds}</div>
+      ${w?`<button class="review-link" data-act="review" data-s="${s.key}">오답 ${w}문제 다시 풀기</button>`:''}
+    </section>`;
+  }).join('');
+}
+
+function noteView(){
+  const all = Object.values(S.wrongs);
+  const open = all.filter(w=>!w.resolved).length, closed = all.length-open;
+  const chips = [{k:'all',n:'전체'}, ...SUBJECTS.map(s=>({k:s.key,n:s.name}))].map(c=>
+    `<button class="chip" aria-pressed="${S.filter===c.k}" data-act="filter" data-v="${c.k}">${c.n}</button>`).join('');
+  const head = `<div class="note-head">${chips}
+    <label class="toggle"><input type="checkbox" id="showResolved" data-act="resolved" ${S.showResolved?'checked':''}> 해결한 문제도 보기</label></div>
+    <p class="meta">아직 못 푼 오답 <b>${open}</b> · 다시 풀어 해결 ${closed}</p>
+    <div class="export"><button class="btn pen" data-act="export">아빠에게 보낼 기록 복사</button><span class="meta" id="exportMsg" aria-live="polite"></span></div>
+    <textarea id="exportBox" class="export-box" readonly hidden aria-label="복사할 기록"></textarea>`;
+  if (!all.length) return head + `<div class="empty"><strong>아직 오답이 없어요</strong>회차를 풀다가 틀린 문제는 여기에 자동으로 모여요.</div>`;
+  const groups = SUBJECTS.filter(s=>S.filter==='all'||S.filter===s.key).map(s=>{
+    const list = all.filter(w=>w.subject===s.key && (S.showResolved || !w.resolved))
+      .sort((a,b)=> (a.resolved-b.resolved) || (b.wrongCount-a.wrongCount) || a.qid.localeCompare(b.qid));
+    if (!list.length) return '';
+    const w = openWrongs(s.key).length;
+    return `<div class="group"><div class="group-head"><h3>${s.name}</h3>
+      ${w?`<button class="review-link" data-act="review" data-s="${s.key}">${s.name} 오답 ${w}문제 모아 풀기</button>`:''}</div>
+      ${list.map(noteCard).join('')}</div>`;
+  }).join('');
+  return head + (groups || `<div class="empty"><strong>이 과목은 깨끗해요</strong>해결한 문제까지 보려면 위의 체크를 켜 주세요.</div>`);
+}
+
+function noteCard(w){
+  const q = Q[w.qid]; if (!q) return '';
+  const mine = (typeof w.lastChosen==='number') ? `${NUM[w.lastChosen]} ${esc(q.o[w.lastChosen])}` : '';
+  return `<article class="wcard${w.resolved?' done':''}">
+    <div class="wmeta"><span>${q.round}회차 ${q.num}번</span><span>틀린 횟수 ${w.wrongCount}</span>
+      <span class="state ${w.resolved?'closed':'open'}">${w.resolved?'해결':'다시 풀기 전'}</span></div>
+    <p class="prompt">${esc(q.p)}</p>
+    ${mine?`<p class="mine">내가 고른 답: <s>${mine}</s></p>`:''}
+    <p class="answer-line">정답: <b>${NUM[q.a]} ${esc(q.o[q.a])}</b></p>
+    <details><summary>해설 보기</summary><p class="explain">${esc(q.e)}</p></details>
+  </article>`;
+}
+
+function quizView(){
+  const z = S.quiz, q = Q[z.items[z.idx]], answered = z.picked!==null;
+  const dots = z.items.map((id,i)=>{
+    const r = z.answers[i]; const cls = r ? (r.correct?'ok':'no') : (i===z.idx?'now':'');
+    return `<span class="dot ${cls}" aria-label="${i+1}번 ${r?(r.correct?'정답':'오답'):''}">${i+1}</span>`;
+  }).join('');
+  const opts = q.o.map((t,i)=>{
+    let cls = ''; if (answered){ if (i===q.a) cls='right'; else if (i===z.picked) cls='wrong'; if (i===z.picked) cls+=' picked'; }
+    return `<button class="opt ${cls}" data-act="pick" data-i="${i}" ${answered?'disabled':''}><span class="omr">${i+1}</span><span class="opt-text">${esc(t)}</span></button>`;
+  }).join('');
+  const correct = answered && z.picked===q.a;
+  const last = z.idx===z.items.length-1;
+  return `<div style="display:flex;flex-direction:column;gap:14px">
+    <div class="qbar"><button class="btn ghost" data-act="quit">그만하기</button><span class="where">${esc(z.label)}</span></div>
+    <div class="dots" role="list">${dots}</div>
+    <section class="card">
+      <p class="qlabel">문제 ${z.idx+1} / ${z.items.length}${z.kind==='review'?` <span class="meta">(${q.round}회차 ${q.num}번)</span>`:''}</p>
+      <p class="prompt">${esc(q.p)}</p>
+      <div class="opts">${opts}</div>
+      ${!answered ? (z.showHint ? `<p class="hint">힌트: ${esc(q.h)}</p>` : `<button class="hint-btn" data-act="hint">힌트 보기</button>`) : ''}
+      ${answered ? `<div class="feedback" aria-live="polite">
+        <p class="verdict">${correct?'정답! ○':'아깝다 ／'}</p>
+        ${correct?'':`<p class="answer-line">정답은 <b>${NUM[q.a]} ${esc(q.o[q.a])}</b></p>`}
+        <p class="explain">${esc(q.e)}</p>
+        <div class="actions"><button class="btn pen" data-act="next">${last?'결과 보기':'다음 문제'}</button></div>
+      </div>` : ''}
+    </section></div>`;
+}
+
+function resultView(){
+  const z = S.quiz, score = z.answers.filter(a=>a.correct).length, total = z.items.length;
+  const wrongN = total-score;
+  const msg = z.kind==='review'
+    ? (wrongN ? `${score}문제를 해결했어. 남은 ${wrongN}문제는 오답노트에 그대로 있어.` : '오답을 전부 해결했어!')
+    : (wrongN ? `틀린 ${wrongN}문제는 오답노트에 저장했어.` : '다 맞혔어! 다음 회차로 가 보자.');
+  const list = z.items.map((id,i)=>{ const q=Q[id], r=z.answers[i];
+    return `<li><span class="mark" aria-label="${r.correct?'정답':'오답'}">${r.correct?'○':'／'}</span><span>${z.kind==='review'?`${q.round}회차 `:''}${q.num}번 · ${esc(q.p.split('\n')[0].slice(0,40))}${q.p.split('\n')[0].length>40?'…':''}</span></li>`; }).join('');
+  return `<section class="card">
+    <p class="qlabel">${esc(z.label)} 결과</p>
+    <p class="result-score">${score} / ${total}</p>
+    <p>${msg}</p>
+    <ul class="result-list">${list}</ul>
+    <div class="actions">
+      ${wrongN?`<button class="btn pen" data-act="tonote" data-s="${z.subject}">오답노트 보기</button>`:''}
+      <button class="btn ghost" data-act="again">같은 문제 다시 풀기</button>
+      <button class="btn ghost" data-act="home">과목 고르기</button>
+    </div></section>`;
+}
+
+/* ---------- actions ---------- */
+function startRound(k,n){
+  const r = roundOf(k,n);
+  S.quiz = {kind:'round', subject:k, round:n, label:`${subj(k).name} ${n}회차 · ${r.title}`,
+    items:r.qs.map(q=>q.id), idx:0, answers:[], picked:null, showHint:false};
+  S.screen='quiz'; render(); window.scrollTo({top:0});
+}
+function startReview(k){
+  const ids = openWrongs(k).sort((a,b)=>a.qid.localeCompare(b.qid,undefined,{numeric:true})).map(w=>w.qid);
+  if (!ids.length) return;
+  S.quiz = {kind:'review', subject:k, round:null, label:`${subj(k).name} 오답 다시 풀기`, items:ids, idx:0, answers:[], picked:null, showHint:false};
+  S.screen='quiz'; render(); window.scrollTo({top:0});
+}
+function pick(i){
+  const z = S.quiz; if (z.picked!==null) return;
+  const q = Q[z.items[z.idx]]; const correct = i===q.a; const now = new Date().toISOString();
+  z.picked = i; z.answers[z.idx] = {qid:q.id, chosen:i, correct};
+  const prev = S.wrongs[q.id];
+  if (!correct){
+    putWrong({qid:q.id, subject:q.subject, round:q.round, num:q.num, lastChosen:i,
+      wrongCount:(prev?prev.wrongCount:0)+1, resolved:false, firstAt:prev?prev.firstAt:now, lastAt:now, resolvedAt:null});
+  } else if (prev && !prev.resolved){
+    putWrong({...prev, resolved:true, resolvedAt:now});
+  }
+  render();
+}
+function next(){
+  const z = S.quiz;
+  if (z.idx < z.items.length-1){ z.idx++; z.picked=null; z.showHint=false; render(); window.scrollTo({top:0}); return; }
+  const score = z.answers.filter(a=>a.correct).length;
+  addAttempt({kind:z.kind, subject:z.subject, round:z.round, score, total:z.items.length,
+    results:z.answers.map(a=>({qid:a.qid, chosen:a.chosen, correct:a.correct})), at:new Date().toISOString()});
+  S.screen='result'; render(); window.scrollTo({top:0});
+}
+
+document.getElementById('view').addEventListener('click', e=>{
+  const b = e.target.closest('[data-act]'); if (!b) return;
+  const a = b.dataset.act;
+  if (a==='tab'){ S.tab=b.dataset.v; render(); }
+  else if (a==='start') startRound(b.dataset.s, Number(b.dataset.r));
+  else if (a==='review') startReview(b.dataset.s);
+  else if (a==='pick') pick(Number(b.dataset.i));
+  else if (a==='hint'){ S.quiz.showHint=true; render(); }
+  else if (a==='next') next();
+  else if (a==='quit' || a==='home'){ S.screen='list'; S.tab='home'; S.quiz=null; render(); }
+  else if (a==='again'){ const z=S.quiz; if (z.kind==='round') startRound(z.subject, z.round); else startReview(z.subject); }
+  else if (a==='tonote'){ S.filter=b.dataset.s||'all'; S.tab='note'; S.screen='list'; S.quiz=null; render(); window.scrollTo({top:0}); }
+  else if (a==='export'){
+    const text = exportText(), box = document.getElementById('exportBox'), msg = document.getElementById('exportMsg');
+    const fallback = ()=>{ box.value = text; box.hidden = false; box.focus(); box.select(); msg.textContent = '아래 글을 길게 눌러 전체 선택한 뒤 복사해 주세요.'; };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(()=>{ msg.textContent = '복사했어요. 카톡으로 아빠에게 붙여 보내 주세요.'; }, fallback);
+    else fallback();
+  }
+  else if (a==='filter'){ S.filter=b.dataset.v; render(); }
+});
+document.getElementById('view').addEventListener('change', e=>{
+  if (e.target.dataset.act==='resolved'){ S.showResolved = e.target.checked; render(); }
+});
+
+loadLocal(); render();
+setFoot(storageOK ? '기록은 이 아이패드에 저장돼요. 홈 화면에 추가한 아이콘으로만 열어 주세요.' : '이 브라우저에서는 기록을 저장할 수 없어요. 개인정보 보호 브라우징을 끄고 열어 주세요.');
+</script>
+</body>
+</html>
